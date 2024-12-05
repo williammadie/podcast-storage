@@ -1,18 +1,40 @@
 from http import HTTPStatus
 import os
-from fastapi import APIRouter, Response, UploadFile
+from fastapi import APIRouter, HTTPException, Response, UploadFile
 from fastapi.responses import FileResponse
 
 file_storage_router = APIRouter()
 
 STORAGE_DIR = "storage"
+# 1 GB in bytes
+MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024
+MAX_FILES_IN_STORAGE = 10
 
 @file_storage_router.post("/")
 async def upload_file(file: UploadFile):
-    if file.filename is None:
-        return Response(
+
+    if file.size is None or file.filename is None:
+        raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST, 
-            content={"reason": "no filename"}
+            detail={"reason": "bad file detected"}
+        )
+
+    if file.size > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, 
+            detail={"reason": "file size exceeds 1 GB"}
+        )
+
+    if file.filename is None:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST, 
+            detail={"reason": "no filename"}
+        )
+    
+    if len(os.listdir(STORAGE_DIR)) >= MAX_FILES_IN_STORAGE:
+        raise HTTPException(
+            status_code=HTTPStatus.BAD_REQUEST,
+            detail="too many files in storage"
         )
 
     filepath = os.path.join(STORAGE_DIR, file.filename)
