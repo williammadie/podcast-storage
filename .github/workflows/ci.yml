@@ -111,4 +111,4 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
 
-            /home/yann/rollout.sh raze-front
+            /home/yann/rollout.sh race-api
