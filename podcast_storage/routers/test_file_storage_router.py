@@ -37,7 +37,7 @@ class TestFileUpload(unittest.TestCase):
         # Generate a 10 MB in-memory file
         file_size = 10 * 1024 * 1024  # 10 MB
         file_content = BytesIO(b"x" * file_size)
-        file_content.name = "test_file.dat"
+        file_content.name = "test_file.m4a"
 
         # Perform the POST request to the /file_storage/ endpoint
         response = self.client.post(
@@ -51,7 +51,7 @@ class TestFileUpload(unittest.TestCase):
         response_data = response.json()
 
         # Check that the response contains the correct filename and size
-        self.assertEqual(response_data["filename"], "test_file.dat")
+        self.assertEqual(response_data["filename"], "test_file.m4a")
         self.assertEqual(response_data["size"], file_size)
 
 
