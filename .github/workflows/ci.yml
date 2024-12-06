@@ -76,7 +76,7 @@ jobs:
       -
         name: Build and Run Dockerfile
         run: |
-          docker build -f ./docker/rest-api/Dockerfile -t podcast-storage:latest .
+          docker build -t podcast-storage:latest .
           docker run -d -p 8000:8000 podcast-storage:latest
       -
         name: Wait for the container to be ready
