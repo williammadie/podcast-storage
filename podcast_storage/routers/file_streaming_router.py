@@ -1,21 +1,25 @@
 from http import HTTPStatus
 import os
-from fastapi import APIRouter, Header, Response
+from fastapi import APIRouter, HTTPException, Header, Response
 
 
 file_streaming_router = APIRouter()
 
-STORAGE_DIR = "storage"
+STORAGE_DIR = os.getenv("STORAGE_DIR", "/tmp/podcast-storage")
 CHUNK_SIZE = 1024 * 10
 
 
 @file_streaming_router.get("/{filename}")
 async def stream_media(filename: str, range: str = Header(None)):
+
+    # Ensure the directory exists
+    os.makedirs(STORAGE_DIR, exist_ok=True)
+
     media_range = range
     if filename not in os.listdir(STORAGE_DIR):
-        return HTTP(
+        return HTTPException(
             status_code=HTTPStatus.NOT_FOUND,
-            content={"reason": "no file found with this filename"}
+            detail={"reason": "no file found with this filename"}
         )
 
     filepath = os.path.join(STORAGE_DIR, filename)
