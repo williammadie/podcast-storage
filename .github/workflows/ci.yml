@@ -79,7 +79,7 @@ jobs:
       -
         name: Build and Run Dockerfile
         run: |
-          docker build -f ./docker/rest-api/Dockerfile -t  ghcr.io/suprasanity/race-api:latest .
+          docker build -t  ghcr.io/suprasanity/race-api:latest .
           docker push ghcr.io/suprasanity/race-api:latest
           docker run -d -p 8000:8000  docker ghcr.io/suprasanity/race-api:latest
       -
