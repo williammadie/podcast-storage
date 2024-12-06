@@ -9,7 +9,8 @@ file_storage_router = APIRouter()
 MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024
 MAX_FILES_IN_STORAGE = 10
 STORAGE_DIR = os.getenv("STORAGE_DIR", "/tmp/podcast-storage")
-#xz
+# xz
+
 
 @file_storage_router.post("/")
 async def upload_file(file: UploadFile):
