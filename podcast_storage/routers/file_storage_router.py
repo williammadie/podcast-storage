@@ -72,6 +72,7 @@ async def list_all_files():
 
 @file_storage_router.get("/{filename}")
 async def download_file(filename: str):
+    os.makedirs(STORAGE_DIR, exist_ok=True)
     if filename in os.listdir(STORAGE_DIR):
         filepath = os.path.join(STORAGE_DIR, filename)
         return FileResponse(
