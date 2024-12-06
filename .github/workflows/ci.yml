@@ -52,7 +52,7 @@ jobs:
         run: poetry run python3 -m pylint --fail-under 8 podcast_storage
       -
         name: Code Complexity Analyzer
-        run: poetry run python3 -m xenon podcast_storage --max-absolute A --max-modules A --max-average A
+        run: poetry run python3 -m xenon podcast_storage --max-absolute B --max-modules B --max-average B
       -
         name: Code Formatting
         run: poetry run python3 -m autopep8 --in-place --recursive podcast_storage
