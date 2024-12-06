@@ -2,6 +2,7 @@ from typing import Union
 
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from podcast_storage.routers.file_storage_router import file_storage_router
 from podcast_storage.routers.file_streaming_router import file_streaming_router
@@ -9,6 +10,15 @@ from podcast_storage.routers.file_streaming_router import file_streaming_router
 load_dotenv()
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.include_router(file_storage_router,
                    prefix="/file_storage", tags=["file_storage"])
