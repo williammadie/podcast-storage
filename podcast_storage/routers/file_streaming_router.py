@@ -13,7 +13,7 @@ CHUNK_SIZE = 1024 * 10
 async def stream_media(filename: str, range: str = Header(None)):
     media_range = range
     if filename not in os.listdir(STORAGE_DIR):
-        return Response(
+        return HTTP(
             status_code=HTTPStatus.NOT_FOUND,
             content={"reason": "no file found with this filename"}
         )
