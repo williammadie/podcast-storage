@@ -10,8 +10,11 @@ load_dotenv()
 
 app = FastAPI()
 
-app.include_router(file_storage_router, prefix="/file_storage", tags=["file_storage"])
-app.include_router(file_streaming_router, prefix="/file_streaming", tags=["file_streaming"])
+app.include_router(file_storage_router,
+                   prefix="/file_storage", tags=["file_storage"])
+app.include_router(file_streaming_router,
+                   prefix="/file_streaming", tags=["file_streaming"])
+
 
 @app.get("/")
 def read_root():

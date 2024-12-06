@@ -9,27 +9,28 @@ file_storage_router = APIRouter()
 MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024
 MAX_FILES_IN_STORAGE = 10
 
+
 @file_storage_router.post("/")
 async def upload_file(file: UploadFile):
 
     if file.size is None or file.filename is None:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, 
+            status_code=HTTPStatus.BAD_REQUEST,
             detail={"reason": "bad file detected"}
         )
 
     if file.size > MAX_FILE_SIZE:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, 
+            status_code=HTTPStatus.BAD_REQUEST,
             detail={"reason": "file size exceeds 1 GB"}
         )
 
     if file.filename is None:
         raise HTTPException(
-            status_code=HTTPStatus.BAD_REQUEST, 
+            status_code=HTTPStatus.BAD_REQUEST,
             detail={"reason": "no filename"}
         )
-    
+
     if len(os.listdir(os.getenv("STORAGE_DIR"))) >= MAX_FILES_IN_STORAGE:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
@@ -40,13 +41,14 @@ async def upload_file(file: UploadFile):
 
     # Ensure the directory exists
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
-    
+
     # Write the uploaded file to the specified location
     with open(filepath, "wb") as buffer:
         while contents := await file.read(1024):  # Read the file in chunks
             buffer.write(contents)
-    
+
     return {"filename": file.filename, "size": file.size}
+
 
 @file_storage_router.get("/all")
 async def list_all_files():
@@ -65,6 +67,6 @@ async def download_file(filename: str):
         )
 
     return Response(
-        status_code=HTTPStatus.NOT_FOUND, 
+        status_code=HTTPStatus.NOT_FOUND,
         content={"reason": "no file found with this filename"}
     )
