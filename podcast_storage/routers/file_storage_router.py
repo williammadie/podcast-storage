@@ -14,7 +14,7 @@ STORAGE_DIR = os.getenv("STORAGE_DIR", "/tmp/podcast-storage")
 @file_storage_router.post("/")
 async def upload_file(file: UploadFile):
 
-    #verify_access_token(bearer_auth)
+    # verify_access_token(bearer_auth)
 
     # Ensure the directory exists
     os.makedirs(STORAGE_DIR, exist_ok=True)
@@ -42,7 +42,7 @@ async def upload_file(file: UploadFile):
             status_code=HTTPStatus.BAD_REQUEST,
             detail="too many files in storage"
         )
-    
+
     # File type authorized extensions
     if not file.filename.endswith(('.mov', '.avi', '.mp4', '.mp3', '.m4a')):
         raise HTTPException(
