@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse
 
 file_storage_router = APIRouter()
 
-STORAGE_DIR = "storage"
 # 1 GB in bytes
 MAX_FILE_SIZE = 1 * 1024 * 1024 * 1024
 MAX_FILES_IN_STORAGE = 10
@@ -31,13 +30,13 @@ async def upload_file(file: UploadFile):
             detail={"reason": "no filename"}
         )
     
-    if len(os.listdir(STORAGE_DIR)) >= MAX_FILES_IN_STORAGE:
+    if len(os.listdir(os.getenv("STORAGE_DIR"))) >= MAX_FILES_IN_STORAGE:
         raise HTTPException(
             status_code=HTTPStatus.BAD_REQUEST,
             detail="too many files in storage"
         )
 
-    filepath = os.path.join(STORAGE_DIR, file.filename)
+    filepath = os.path.join(os.getenv("STORAGE_DIR"), file.filename)
 
     # Ensure the directory exists
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
@@ -47,18 +46,18 @@ async def upload_file(file: UploadFile):
         while contents := await file.read(1024):  # Read the file in chunks
             buffer.write(contents)
     
-    return {"filename": file.filename}
+    return {"filename": file.filename, "size": file.size}
 
 @file_storage_router.get("/all")
 async def list_all_files():
-    files = os.listdir(STORAGE_DIR)
+    files = os.listdir(os.getenv("STORAGE_DIR"))
     return {"files": files}
 
 
 @file_storage_router.get("/{filename}")
 async def download_file(filename: str):
-    if filename in os.listdir(STORAGE_DIR):
-        filepath = os.path.join(STORAGE_DIR, filename)
+    if filename in os.listdir(os.getenv("STORAGE_DIR")):
+        filepath = os.path.join(os.getenv("STORAGE_DIR"), filename)
         return FileResponse(
             filepath,
             filename=filename,

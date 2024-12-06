@@ -1,0 +1,93 @@
+name: Python Continuous Integration
+
+on:
+  pull_request:
+    branches: ["dev", "master"]
+
+jobs:
+  codebase-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      -
+        name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10.12'
+      -
+        name: Ensure Default Package Manager is up to date
+        run: python3 -m pip install --upgrade pip setuptools wheel 
+      -
+        name: Install Poetry Package Manager
+        run: pip install poetry
+      -
+        name: Install Dependencies
+        run: poetry install
+      -
+        name: Test with Pytest
+        run: poetry run pytest
+      -
+        name: Test Code Coverage
+        run: |
+          poetry run coverage run -m pytest
+          poetry run coverage report -m
+      - 
+        name: Coverage Badge
+        uses: tj-actions/coverage-badge-py@v2
+      -
+        name: Static Type Checker
+        run: poetry run python3 -m mypy podcast_storage --disable-error-code=import-untyped
+      -
+        name: Code Linting
+        run: poetry run python3 -m pylint --fail-under 8 podcast_storage
+      -
+        name: Code Complexity Analyzer
+        run: poetry run python3 -m xenon podcast_storage --max-absolute A --max-modules A --max-average A
+      -
+        name: Code Formatting
+        run: poetry run python3 -m autopep8 --in-place --recursive podcast_storage
+      -
+        name: Auto Commit Code Formatting
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Auto Commit Code Formatting
+          branch: ${{ github.head_ref }}
+  
+  docker-image-checks:
+    needs: codebase-checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      -
+        name: Build and Run Dockerfile
+        run: |
+          docker build -f ./docker/rest-api/Dockerfile -t podcast-storage:latest .
+          docker run -d -p 8000:8000 podcast-storage:latest
+      -
+        name: Wait for the container to be ready
+        run: |
+          echo "Waiting for the container to be ready..."
+          for i in {1..30}; do
+            if curl --fail http://127.0.0.1:8000/health; then
+              echo "Container is ready!"
+              exit 0
+            fi
+            echo "Waiting..."
+            sleep 2
+          done
+          echo "Container did not become ready in time" >&2
+          exit 1
+      - 
+        name: Containerized Flask API healthcheck
+        run: |
+          curl --fail http://localhost:8000/health

@@ -1,0 +1,9 @@
+
+services:
+  podcast-storage:
+    container_name: podcast-storage
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
