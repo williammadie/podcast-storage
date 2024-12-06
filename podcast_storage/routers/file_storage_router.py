@@ -81,7 +81,6 @@ async def download_file(filename: str):
             media_type='application/octet-stream'
         )
 
-    return Response(
-        status_code=HTTPStatus.NOT_FOUND,
-        content={"reason": "no file found with this filename"}
+    return HTTPException=HTTPStatus.NOT_FOUND,
+        detail={"reason": "no file found with this filename"}
     )
