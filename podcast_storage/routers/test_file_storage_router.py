@@ -10,6 +10,7 @@ from podcast_storage.routers.file_storage_router import file_storage_router
 
 load_dotenv()
 
+
 class TestFileUpload(unittest.TestCase):
 
     @classmethod
@@ -24,7 +25,7 @@ class TestFileUpload(unittest.TestCase):
         # Clean up storage dir
         for file in os.listdir(self.storage_dir):
             os.remove(os.path.join(self.storage_dir, file))
-    
+
     @classmethod
     def tearDownClass(cls):
         """ This method is called once after all tests """
@@ -41,7 +42,8 @@ class TestFileUpload(unittest.TestCase):
         # Perform the POST request to the /file_storage/ endpoint
         response = self.client.post(
             "/",
-            files={"file": (file_content.name, file_content, "application/octet-stream")}
+            files={"file": (file_content.name, file_content,
+                            "application/octet-stream")}
         )
 
         # Assert that the request was successful
@@ -51,6 +53,7 @@ class TestFileUpload(unittest.TestCase):
         # Check that the response contains the correct filename and size
         self.assertEqual(response_data["filename"], "test_file.dat")
         self.assertEqual(response_data["size"], file_size)
+
 
 if __name__ == "__main__":
     unittest.main()
