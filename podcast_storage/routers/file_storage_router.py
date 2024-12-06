@@ -66,6 +66,7 @@ async def upload_file(file: UploadFile):
 
 @file_storage_router.get("/all")
 async def list_all_files():
+    os.makedirs(STORAGE_DIR, exist_ok=True)
     files = os.listdir(STORAGE_DIR)
     return {"files": files}
 
