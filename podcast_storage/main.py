@@ -20,7 +20,7 @@ app.add_middleware(
         'Authorization',
         'cache-control',
         'expires'
-        ]
+    ]
 )
 
 
