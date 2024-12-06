@@ -82,5 +82,5 @@ async def download_file(filename: str):
         )
 
     return HTTPException(HTTPStatus.NOT_FOUND,
-        detail={"reason": "no file found with this filename"}
-    )
+                         detail={"reason": "no file found with this filename"}
+                         )
