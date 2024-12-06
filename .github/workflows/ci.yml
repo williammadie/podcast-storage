@@ -3,6 +3,8 @@ name: Python Continuous Integration
 on:
   pull_request:
     branches: ["dev", "master"]
+  push:
+    branches: ["dev", "master"]
 
 jobs:
   codebase-checks:
