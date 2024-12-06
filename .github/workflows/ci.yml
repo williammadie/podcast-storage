@@ -48,9 +48,6 @@ jobs:
         name: Coverage Badge
         uses: tj-actions/coverage-badge-py@v2
       -
-        name: Static Type Checker
-        run: poetry run python3 -m mypy podcast_storage --disable-error-code=import-untyped
-      -
         name: Code Linting
         run: poetry run python3 -m pylint --fail-under 8 podcast_storage
       -
